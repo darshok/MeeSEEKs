@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.glootie.meeseeks.R
 import com.glootie.meeseeks.core.IMAGE_SHARED_KEY
@@ -101,7 +100,7 @@ private fun CardContent(
                 modifier = modifier,
                 text = index.toString(),
                 fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onTertiary
             )
         }

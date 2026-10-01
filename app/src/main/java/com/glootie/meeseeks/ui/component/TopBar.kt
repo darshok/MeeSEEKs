@@ -1,5 +1,10 @@
 package com.glootie.meeseeks.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,11 +22,17 @@ fun MainTopBar(title: String, isLastScreen: Boolean, onBack: () -> Unit) {
     TopAppBar(
         title = { Text(title) },
         navigationIcon = {
-            if (!isLastScreen) IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back_navigation),
-                )
+            AnimatedVisibility(
+                visible = !isLastScreen,
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally()
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_navigation),
+                    )
+                }
             }
         }
     )
