@@ -11,7 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +41,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.glootie.meeseeks.R
 import com.glootie.meeseeks.core.IMAGE_SHARED_KEY
+import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.ui.common.UiState
+import com.glootie.meeseeks.ui.component.AttributeCard
 import com.glootie.meeseeks.ui.screen.characterlist.ErrorCard
 
 @Composable
@@ -57,31 +68,42 @@ fun CharacterDetailsScreen(
             is UiState.Error -> {
                 ErrorCard(
                     modifier = Modifier.align(Alignment.Center),
-                    message = state.message ?: "An error occurred",
-                    onClickRetry = { /* TODO:Handle retry logic if implemented */ }
+                    message = state.message ?: stringResource(R.string.generic_error),
+                    onClickRetry = { viewModel.getCharacterDetails() }
                 )
             }
 
             is UiState.Success -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
                         Row(
                             modifier = Modifier
-                                .align(Alignment.BottomStart)
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.Bottom
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             with(sharedTransitionScope) {
                                 AsyncImage(
                                     model = state.data.image,
-                                    contentDescription = stringResource(R.string.character_thumbnail),
+                                    contentDescription = stringResource(R.string.character_thumbnail_content_description),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .width(110.dp)
-                                        .aspectRatio(3f / 4f)
-                                        .clip(RoundedCornerShape(8.dp))
+                                        .aspectRatio(1f)
+                                        .clip(RoundedCornerShape(12.dp))
                                         .sharedElement(
                                             sharedContentState = rememberSharedContentState(
                                                 key = IMAGE_SHARED_KEY + characterId
@@ -91,87 +113,79 @@ fun CharacterDetailsScreen(
                                 )
                             }
 
-                            Column(modifier = Modifier.padding(bottom = 8.dp)) {
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 Text(
                                     text = state.data.name,
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold
                                 )
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    SuggestionChip(
+                                        onClick = { },
+                                        label = { Text(state.data.species) }
+                                    )
+                                }
                             }
                         }
                     }
 
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            SuggestionChip(
-                                onClick = { },
-                                label = { Text(state.data.species) }
-                            )
-                            SuggestionChip(
-                                onClick = { },
-                                label = { Text(state.data.status.name) }
-                            )
-                        }
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                InfoItem(
-                                    "Score",
-                                    state.data.gender
-                                )
-                                InfoItem("Format", state.data.status.name)
-                                InfoItem("Episodes", state.data.status.name)
-                                InfoItem("Status", state.data.status.name)
-                            }
-                        }
-
-                        Text(
-                            text = "Description",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        AttributeCard(
+                            modifier = Modifier.weight(1f),
+                            title = stringResource(R.string.gender_title),
+                            body= state.data.gender,
+                            icon = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.gender_icon_content_description)
                         )
+                        AttributeCard(
+                            modifier = Modifier.weight(1f),
+                            title = stringResource(R.string.status_title),
+                            body = state.data.status.name,
+                            icon = getIconForStatus(state.data.status),
+                            contentDescription = stringResource(R.string.status_icon_content_description)
 
-                        Text(
-                            text = state.data.gender,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
+
+                    Text(
+                        text = stringResource(R.string.locations_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
+                    AttributeCard(
+                        title = stringResource(R.string.origin_title),
+                        body = state.data.origin,
+                        icon = Icons.Default.Place,
+                        contentDescription = stringResource(R.string.location_icon_content_description)
+                    )
+
+                    AttributeCard(
+                        title = stringResource(R.string.last_known_location_title),
+                        body = state.data.location,
+                        icon = Icons.Default.LocationOn,
+                        contentDescription = stringResource(R.string.location_icon_content_description)
+                    )
                 }
             }
         }
     }
 }
 
-@Composable
-fun InfoItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+private fun getIconForStatus(status: CharacterStatus) =
+    when (status) {
+        CharacterStatus.ALIVE ->  Icons.Default.Favorite
+        CharacterStatus.DEAD -> Icons.Default.Close
+        CharacterStatus.UNKNOWN -> Icons.Default.Search
     }
-}

@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = CharacterDetailsViewModel.Factory::class)
 class CharacterDetailsViewModel @AssistedInject constructor(
     @Assisted private val characterId: Int,
-    getCharacterDetailsUseCase: GetCharacterDetailsUseCase
+    private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase
 ) : ViewModel() {
 
     @AssistedFactory
@@ -29,10 +29,13 @@ class CharacterDetailsViewModel @AssistedInject constructor(
     val characterDetailsUiState: StateFlow<UiState<CharacterDetails>> = _characterDetailsUiState.asStateFlow()
 
     init {
+        getCharacterDetails()
+    }
+
+    internal fun getCharacterDetails() {
         viewModelScope.launch {
             _characterDetailsUiState.emit(getCharacterDetailsUseCase(characterId))
         }
     }
-
 
 }

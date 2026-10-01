@@ -16,6 +16,6 @@ data class PageInfo(
 data class CharacterSummary(
     val id: Int,
     val name: String,
-    val status: String,
+    val status: CharacterStatus,
     val image: String?,
 )

@@ -1,6 +1,9 @@
 package com.glootie.meeseeks.data.entity.response
 
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import com.glootie.meeseeks.domain.model.CharacterPaginated
+import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.domain.model.CharacterSummary
 import com.glootie.meeseeks.domain.model.PageInfo
 import com.google.gson.annotations.SerializedName
@@ -49,6 +52,6 @@ internal fun PageInfoResponse.mapToDomain() = PageInfo(
 internal fun CharacterSummaryResponse.mapToDomain() = CharacterSummary(
     id = this.id,
     name = this.name,
-    status = this.status,
+    status = enumValueOf<CharacterStatus>(status.toUpperCase(Locale.current)),
     image = this.image
 )
