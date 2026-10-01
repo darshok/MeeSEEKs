@@ -3,4 +3,5 @@
     <string name="generic_retry">Retry</string>
     <string name="generic_error">An error occurred. Please try again.</string>
     <string name="character_thumbnail">Character thumbnail</string>
+    <string name="back_navigation">Go back</string>
 </resources>

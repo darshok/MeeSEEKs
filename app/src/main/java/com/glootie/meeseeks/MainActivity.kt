@@ -10,7 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation3.runtime.rememberNavBackStack
+import com.glootie.meeseeks.ui.component.MainTopBar
 import com.glootie.meeseeks.ui.navigation.NavHost
+import com.glootie.meeseeks.ui.navigation.Routes
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,11 +37,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MeeSEEKsApp() {
+    val backStack = rememberNavBackStack(Routes.CharacterList)
+
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        topBar = { MainTopBar(title = "MeeSEEKs", isLastScreen = backStack.size == 1, onBack = { backStack.removeLastOrNull() }) }
     ) { paddingValues ->
         NavHost(
             modifier = Modifier.padding(paddingValues),
+            backStack = backStack
         )
     }
 }

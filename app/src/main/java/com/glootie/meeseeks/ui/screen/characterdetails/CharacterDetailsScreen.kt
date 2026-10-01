@@ -7,14 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -77,7 +76,6 @@ fun CharacterDetailsScreen(
                                     .fillMaxWidth()
                                     .height(250.dp)
                             )
-                            // Dark overlay to make text more legible
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -99,8 +97,8 @@ fun CharacterDetailsScreen(
                                         contentDescription = "Cover Image",
                                         contentScale = ContentScale.Crop,
                                         modifier = Modifier
-                                            .width(100.dp)
-                                            .height(150.dp)
+                                            .width(110.dp)
+                                            .aspectRatio(3f / 4f)
                                             .clip(RoundedCornerShape(8.dp))
                                             .sharedElement(
                                                 sharedContentState = rememberSharedContentState(
@@ -125,21 +123,10 @@ fun CharacterDetailsScreen(
 
                     item {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            val genres = listOf(state.data.species)
-                            if (!genres.isNullOrEmpty()) {
-                                LazyRow(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.padding(bottom = 16.dp)
-                                ) {
-                                    items(genres.filterNotNull()) { genre ->
-                                        SuggestionChip(
-                                            onClick = { },
-                                            label = { Text(genre) }
-                                        )
-                                    }
-                                }
-                            }
-                            Row {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            ) {
                                 SuggestionChip(
                                     onClick = { },
                                     label = { Text(state.data.species) }
