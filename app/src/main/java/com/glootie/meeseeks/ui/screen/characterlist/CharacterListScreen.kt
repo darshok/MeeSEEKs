@@ -1,0 +1,165 @@
+package com.glootie.meeseeks.ui.screen.characterlist
+
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import com.glootie.meeseeks.R
+import com.glootie.meeseeks.domain.model.CharacterSummary
+import com.glootie.meeseeks.ui.common.UiState
+import com.glootie.meeseeks.ui.component.CharacterCard
+
+@Composable
+fun CharacterListScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: CharacterListViewModel = hiltViewModel(),
+    onItemClick: (Int) -> Unit = {}
+) {
+    val characterList = viewModel.characterList.collectAsLazyPagingItems()
+
+    val uiState by remember {
+        derivedStateOf {
+            when (val refreshState = characterList.loadState.refresh) {
+                is LoadState.Loading -> UiState.Loading
+                is LoadState.Error -> UiState.Error(
+                    message = refreshState.error.localizedMessage,
+                    throwable = refreshState.error
+                )
+
+                else -> UiState.Success(Unit)
+            }
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (uiState) {
+            is UiState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+
+            is UiState.Error -> {
+                ErrorCard(
+                    modifier = Modifier.align(Alignment.Center),
+                    message = (uiState as UiState.Error).message
+                        ?: stringResource(R.string.generic_error),
+                    onClickRetry = { characterList.refresh() }
+                )
+            }
+
+            is UiState.Success -> {
+                CharacterSummaryList(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    modifier = Modifier.fillMaxSize(),
+                    characterList = characterList,
+                    onItemClick = onItemClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CharacterSummaryList(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+    characterList: LazyPagingItems<CharacterSummary>,
+    onItemClick: (Int) -> Unit = {}
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(
+            count = characterList.itemCount,
+            key = characterList.itemKey { it.id }
+        ) { index ->
+            characterList[index]?.let { character ->
+                CharacterCard(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    characterSummary = character,
+                    index = index + 1,
+                    onClick = { onItemClick(character.id) }
+                )
+            }
+        }
+
+        when (val appendState = characterList.loadState.append) {
+            is LoadState.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+            }
+
+            is LoadState.Error -> {
+                item {
+                    ErrorCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        message = appendState.error.localizedMessage.ifBlank { stringResource(R.string.generic_error) }
+                            ?: stringResource(R.string.generic_error),
+                        onClickRetry = { characterList.retry() }
+                    )
+                }
+            }
+
+            else -> {}
+        }
+    }
+}
+
+@Composable
+fun ErrorCard(
+    modifier: Modifier = Modifier,
+    message: String,
+    onClickRetry: () -> Unit
+) {
+    Column(
+        modifier = modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primaryContainer
+        )
+        Button(onClick = onClickRetry) {
+            Text(text = stringResource(R.string.generic_retry))
+        }
+    }
+}

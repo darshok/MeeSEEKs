@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MeeSEEKs" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MeeSEEKs.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/rick_and_morty_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.MeeSEEKs</item>
+    </style>
+</resources>
