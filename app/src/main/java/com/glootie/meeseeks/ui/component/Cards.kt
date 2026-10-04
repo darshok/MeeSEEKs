@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -92,7 +93,7 @@ fun CharacterCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 with(sharedTransitionScope) {
-                    AsyncImage(
+                    AsyncImage( // TODO: add placeholder
                         modifier = Modifier
                             .padding(8.dp)
                             .width(110.dp)
@@ -122,6 +123,28 @@ fun CharacterCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ListErrorCard(
+    modifier: Modifier = Modifier,
+    message: String,
+    onClickRetry: () -> Unit
+) {
+    Column(
+        modifier = modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primaryContainer
+        )
+        Button(onClick = onClickRetry) {
+            Text(text = stringResource(R.string.generic_retry))
         }
     }
 }
@@ -189,7 +212,7 @@ private fun CharacterCardPreview() {
         AnimatedVisibility(visible = true) {
             CharacterCard(
                 sharedTransitionScope = this@SharedTransitionLayout,
-                animatedVisibilityScope = this,
+                animatedVisibilityScope = this@AnimatedVisibility,
                 characterSummary = CharacterSummary(
                     id = 361,
                     name = "Toxic Rick",

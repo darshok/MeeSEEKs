@@ -30,6 +30,7 @@ import com.glootie.meeseeks.R
 import com.glootie.meeseeks.domain.model.CharacterSummary
 import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.component.CharacterCard
+import com.glootie.meeseeks.ui.component.ListErrorCard
 
 @Composable
 fun CharacterListScreen(
@@ -61,7 +62,7 @@ fun CharacterListScreen(
             }
 
             is UiState.Error -> {
-                ErrorCard(
+                ListErrorCard(
                     modifier = Modifier.align(Alignment.Center),
                     message = (uiState as UiState.Error).message
                         ?: stringResource(R.string.generic_error),
@@ -126,7 +127,7 @@ fun CharacterSummaryList(
 
             is LoadState.Error -> {
                 item {
-                    ErrorCard(
+                    ListErrorCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
@@ -138,28 +139,6 @@ fun CharacterSummaryList(
             }
 
             else -> {}
-        }
-    }
-}
-
-@Composable
-fun ErrorCard(
-    modifier: Modifier = Modifier,
-    message: String,
-    onClickRetry: () -> Unit
-) {
-    Column(
-        modifier = modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primaryContainer
-        )
-        Button(onClick = onClickRetry) {
-            Text(text = stringResource(R.string.generic_retry))
         }
     }
 }

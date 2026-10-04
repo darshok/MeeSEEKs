@@ -7,7 +7,7 @@ data class CharacterDetails(
     val gender: String,
     val origin: String,
     val location: String,
-    val image: String
+    val image: String?
 )
 
 enum class CharacterStatus {

@@ -20,7 +20,7 @@ data class CharacterDetailsResponse(
     @SerializedName("location")
     val location: CharacterLocationResponse,
     @SerializedName("image")
-    val image: String
+    val image: String?
 )
 
 data class CharacterOriginResponse(
