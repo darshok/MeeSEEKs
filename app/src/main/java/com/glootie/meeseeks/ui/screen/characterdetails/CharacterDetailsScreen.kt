@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -107,7 +109,7 @@ private fun CharacterDetailsContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
             ),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -119,10 +121,11 @@ private fun CharacterDetailsContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 with(sharedTransitionScope) {
-                    AsyncImage( // TODO: add placeholder
+                    AsyncImage(
                         model = characterDetails.image,
                         contentDescription = stringResource(R.string.character_thumbnail_content_description),
                         contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.ic_image_placeholder),
                         modifier = Modifier
                             .width(110.dp)
                             .aspectRatio(1f)
@@ -203,6 +206,18 @@ private fun CharacterDetailsContent(
     }
 }
 
+@Composable
+private fun BoxScope.CharacterDetailsErrorContent(
+    state: UiState.Error,
+    retry: () -> Unit
+) {
+    ListErrorCard(
+        modifier = Modifier.align(Alignment.Center),
+        message = state.message ?: stringResource(R.string.generic_error),
+        onClickRetry = { retry() }
+    )
+}
+
 private fun getIconForStatus(status: CharacterStatus) =
     when (status) {
         CharacterStatus.ALIVE -> Icons.Default.Favorite
@@ -221,16 +236,29 @@ private fun CharacterDetailsContentPreview() {
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedVisibilityScope = this@AnimatedVisibility,
                     characterDetails = CharacterDetails(
-                        name = "Toxic Rick",
+                        name = "Adjudicator Rick",
                         status = CharacterStatus.DEAD,
                         image = null,
                         species = "Human",
-                        gender = "unknown",
+                        gender = "Male",
                         origin = "unknown",
-                        location = "unknown",
+                        location = "Citadel of Ricks",
                     )
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CharacterDetailsErrorContentPreview() {
+    MeeSEEKsTheme {
+        Box(Modifier.fillMaxSize()){
+            CharacterDetailsErrorContent(
+                state = UiState.Error(message = stringResource(R.string.generic_error)),
+                retry = {}
+            )
         }
     }
 }

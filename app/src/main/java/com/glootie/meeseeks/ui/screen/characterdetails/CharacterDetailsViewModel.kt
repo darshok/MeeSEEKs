@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = CharacterDetailsViewModel.Factory::class)
@@ -34,7 +35,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 
     internal fun getCharacterDetails() {
         viewModelScope.launch {
-            _characterDetailsUiState.emit(getCharacterDetailsUseCase(characterId))
+            _characterDetailsUiState.update { getCharacterDetailsUseCase(characterId) }
         }
     }
 

@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +49,6 @@ import com.glootie.meeseeks.core.IMAGE_SHARED_KEY
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.domain.model.CharacterSummary
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun CharacterCard(
     sharedTransitionScope: SharedTransitionScope,
@@ -93,7 +93,7 @@ fun CharacterCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 with(sharedTransitionScope) {
-                    AsyncImage( // TODO: add placeholder
+                    AsyncImage(
                         modifier = Modifier
                             .padding(8.dp)
                             .width(110.dp)
@@ -105,6 +105,7 @@ fun CharacterCard(
                             ),
                         contentScale = ContentScale.Crop,
                         model = characterSummary.image,
+                        error = painterResource(R.drawable.ic_image_placeholder),
                         contentDescription = stringResource(R.string.character_thumbnail_content_description),
                         onSuccess = { isLoaded = true },
                     )
@@ -160,7 +161,7 @@ fun AttributeCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -204,7 +205,6 @@ private fun AttributeCardPreview() {
     )
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun CharacterCardPreview() {
