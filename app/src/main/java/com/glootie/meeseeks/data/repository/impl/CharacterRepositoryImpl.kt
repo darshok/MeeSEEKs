@@ -7,15 +7,25 @@ import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
 import com.glootie.meeseeks.data.remote.ApiService
 import com.glootie.meeseeks.data.repository.CharacterRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(val apiService: ApiService) :
     CharacterRepository {
 
+    private val _isFirstPageLoaded = MutableSharedFlow<Unit>()
+    override val isFirstPageLoaded: SharedFlow<Unit> = _isFirstPageLoaded.asSharedFlow()
+
     override suspend fun getCharacters(page: Int): DataResponse<CharacterPaginatedResponse> {
         return withContext(Dispatchers.IO) {
-            mapResponseToDataResponse(apiService.getCharacters(page))
+            mapResponseToDataResponse(apiService.getCharacters(page)).also {
+                if (it is DataResponse.Success && page == 1) {
+                    _isFirstPageLoaded.emit(Unit)
+                }
+            }
         }
     }
 

@@ -1,13 +1,13 @@
 package com.glootie.meeseeks.data.repository
 
-import androidx.paging.PagingData
 import com.glootie.meeseeks.core.DataResponse
 import com.glootie.meeseeks.data.entity.response.CharacterDetailsResponse
 import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
-import com.glootie.meeseeks.domain.model.CharacterSummary
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface CharacterRepository {
+
+    val isFirstPageLoaded: SharedFlow<Unit>
 
     suspend fun getCharacters(
         page: Int,
