@@ -3,11 +3,11 @@ package com.glootie.meeseeks.data.repository
 import com.glootie.meeseeks.core.DataResponse
 import com.glootie.meeseeks.data.entity.response.CharacterDetailsResponse
 import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface CharacterRepository {
 
-    val isFirstPageLoaded: SharedFlow<Unit>
+    val isFirstPageLoaded: StateFlow<Boolean>
 
     suspend fun getCharacters(
         page: Int,

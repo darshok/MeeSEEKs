@@ -16,9 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -27,7 +24,6 @@ import com.glootie.meeseeks.ui.navigation.NavHost
 import com.glootie.meeseeks.ui.navigation.Routes
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,19 +32,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        var keepSplashScreen = true
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isFirstPageLoaded.collect {
-                    keepSplashScreen = false
-                }
-            }
-        }
-
-        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
+        splashScreen.setKeepOnScreenCondition { !viewModel.isFirstPageLoaded.value }
         splashScreen.setOnExitAnimationListener { listener ->
             val zoomX = ObjectAnimator.ofFloat(
                 listener.iconView,
