@@ -1,6 +1,9 @@
 package com.glootie.meeseeks
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.glootie.meeseeks.ui.component.MainTopBar
@@ -25,6 +30,30 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { keepSplashScreen }
+        splashScreen.setOnExitAnimationListener { listener ->
+            val zoomX = ObjectAnimator.ofFloat(
+                listener.iconView,
+                View.SCALE_X,
+                0.6f,
+                0.0f
+            ).apply {
+                interpolator = OvershootInterpolator()
+                duration = 500L
+                doOnEnd { listener.remove() }
+            }
+            val zoomY = ObjectAnimator.ofFloat(
+                listener.iconView,
+                View.SCALE_Y,
+                0.6f,
+                0.0f
+            ).apply {
+                interpolator = OvershootInterpolator()
+                duration = 500L
+                doOnEnd { listener.remove() }
+            }
+            zoomX.start()
+            zoomY.start()
+        }
         keepSplashScreen = false // TODO: set when initial load complete
 
         setContent {
@@ -41,7 +70,12 @@ fun MeeSEEKsApp() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { MainTopBar(title = "MeeSEEKs", isLastScreen = backStack.size == 1, onBack = { backStack.removeLastOrNull() }) }
+        topBar = {
+            MainTopBar(
+                title = stringResource(R.string.app_name),
+                isLastScreen = backStack.size == 1,
+                onBack = { backStack.removeLastOrNull() })
+        }
     ) { paddingValues ->
         NavHost(
             modifier = Modifier.padding(paddingValues),
