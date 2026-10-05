@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.glootie.meeseeks.ui.component.MainTopBar
 import com.glootie.meeseeks.ui.navigation.NavHost
@@ -78,7 +76,7 @@ private fun MeeSEEKsApp() {
         topBar = {
             MainTopBar(
                 title = stringResource(R.string.app_name),
-                isLastScreen = getIsLastScreen(backStack),
+                isLastScreen = backStack.size == 1,
                 onBack = { backStack.removeLastOrNull() })
         }
     ) { paddingValues ->
@@ -88,5 +86,3 @@ private fun MeeSEEKsApp() {
         )
     }
 }
-
-private fun getIsLastScreen(backStack: NavBackStack<NavKey>): Boolean = backStack.size == 1
