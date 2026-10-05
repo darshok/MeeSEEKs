@@ -2,6 +2,8 @@
     <string name="app_name">MeeSEEKs</string>
     <string name="generic_retry">Retry</string>
     <string name="generic_error">An error occurred. Please try again.</string>
+    <string name="generic_network_error_retry">An error occurred. Please check your internet connection and try again.</string>
+    <string name="network_error_content_description">Network Error.</string>
     <string name="character_thumbnail_content_description">Character Thumbnail</string>
     <string name="status_icon_content_description">Status Icon</string>
     <string name="gender_icon_content_description">Gender Icon</string>

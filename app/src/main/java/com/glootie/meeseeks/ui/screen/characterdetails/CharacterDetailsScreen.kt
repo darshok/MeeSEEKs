@@ -6,12 +6,13 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -19,16 +20,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,10 +41,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -50,7 +57,6 @@ import com.glootie.meeseeks.domain.model.CharacterDetails
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.component.AttributeCard
-import com.glootie.meeseeks.ui.component.ListErrorCard
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 
 @Composable
@@ -66,17 +72,20 @@ fun CharacterDetailsScreen(
 ) {
     val characterDetailsUiState by viewModel.characterDetailsUiState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         when (val state = characterDetailsUiState) {
             is UiState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
             }
 
             is UiState.Error -> {
-                ListErrorCard(
-                    modifier = Modifier.align(Alignment.Center),
-                    message = state.message ?: stringResource(R.string.generic_error),
-                    onClickRetry = { viewModel.getCharacterDetails() }
+                CharacterDetailsErrorContent(
+                    retry = viewModel::getCharacterDetails
                 )
             }
 
@@ -207,22 +216,46 @@ private fun CharacterDetailsContent(
 }
 
 @Composable
-private fun BoxScope.CharacterDetailsErrorContent(
-    state: UiState.Error,
+private fun CharacterDetailsErrorContent(
     retry: () -> Unit
 ) {
-    ListErrorCard(
-        modifier = Modifier.align(Alignment.Center),
-        message = state.message ?: stringResource(R.string.generic_error),
-        onClickRetry = { retry() }
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.scale(2f),
+            imageVector = Icons.Filled.ErrorOutline,
+            contentDescription = stringResource(R.string.network_error_content_description),
+            tint = MaterialTheme.colorScheme.error
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(R.string.generic_network_error_retry),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            modifier = Modifier.fillMaxWidth(0.6f),
+            onClick = { retry() }
+        ) {
+            Text(
+                text = stringResource(R.string.generic_retry),
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
 }
 
 private fun getIconForStatus(status: CharacterStatus) =
     when (status) {
         CharacterStatus.ALIVE -> Icons.Default.Favorite
         CharacterStatus.DEAD -> Icons.Default.Close
-        CharacterStatus.UNKNOWN -> Icons.Default.Search
+        CharacterStatus.UNKNOWN -> Icons.Default.QuestionMark
     }
 
 @Preview(showBackground = true)
@@ -254,9 +287,8 @@ private fun CharacterDetailsContentPreview() {
 @Composable
 private fun CharacterDetailsErrorContentPreview() {
     MeeSEEKsTheme {
-        Box(Modifier.fillMaxSize()){
+        Box(Modifier.fillMaxSize()) {
             CharacterDetailsErrorContent(
-                state = UiState.Error(message = stringResource(R.string.generic_error)),
                 retry = {}
             )
         }

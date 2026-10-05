@@ -34,6 +34,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
     }
 
     internal fun getCharacterDetails() {
+        _characterDetailsUiState.update { UiState.Loading }
         viewModelScope.launch {
             _characterDetailsUiState.update { getCharacterDetailsUseCase(characterId) }
         }
