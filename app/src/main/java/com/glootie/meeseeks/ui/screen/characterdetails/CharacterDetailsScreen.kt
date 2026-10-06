@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,6 @@ import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -56,7 +56,9 @@ import com.glootie.meeseeks.core.IMAGE_SHARED_KEY
 import com.glootie.meeseeks.domain.model.CharacterDetails
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.ui.common.UiState
+import com.glootie.meeseeks.ui.common.skeleton.AttributeCardSkeleton
 import com.glootie.meeseeks.ui.component.AttributeCard
+import com.glootie.meeseeks.ui.component.shimmerEffect
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 
 @Composable
@@ -75,12 +77,7 @@ fun CharacterDetailsScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
         when (val state = characterDetailsUiState) {
             is UiState.Loading -> {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                }
+                CharacterDetailsSkeletonContent()
             }
 
             is UiState.Error -> {
@@ -216,6 +213,87 @@ private fun CharacterDetailsContent(
 }
 
 @Composable
+private fun CharacterDetailsSkeletonContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .shimmerEffect()
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .height(28.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f)
+                            .height(24.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .shimmerEffect()
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AttributeCardSkeleton(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(80.dp)
+            )
+            AttributeCardSkeleton(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(80.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.3f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color = MaterialTheme.colorScheme.surface)
+                .shimmerEffect()
+        )
+        AttributeCardSkeleton(modifier = Modifier.height(70.dp))
+        AttributeCardSkeleton(modifier = Modifier.height(70.dp))
+    }
+}
+
+@Composable
 private fun CharacterDetailsErrorContent(
     retry: () -> Unit
 ) {
@@ -292,5 +370,13 @@ private fun CharacterDetailsErrorContentPreview() {
                 retry = {}
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CharacterDetailsSkeletonContentPreview() {
+    MeeSEEKsTheme {
+        CharacterDetailsSkeletonContent()
     }
 }
