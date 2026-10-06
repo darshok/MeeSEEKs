@@ -6,11 +6,14 @@ import com.glootie.meeseeks.domain.usecase.character.GetCharacterDetailsUseCase
 import com.glootie.meeseeks.ui.common.UiState
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CharacterDetailsViewModelTest : BaseViewModelTest() {
 
     @MockK
@@ -23,7 +26,7 @@ class CharacterDetailsViewModelTest : BaseViewModelTest() {
 
         val viewModel = CharacterDetailsViewModel(1, getCharacterDetailsUseCase)
 
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val currentState = viewModel.characterDetailsUiState.value
         assertTrue(currentState is UiState.Success)
@@ -36,7 +39,7 @@ class CharacterDetailsViewModelTest : BaseViewModelTest() {
 
         val viewModel = CharacterDetailsViewModel(2, getCharacterDetailsUseCase)
 
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val currentState = viewModel.characterDetailsUiState.value
         assertTrue(currentState is UiState.Error)

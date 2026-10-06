@@ -5,12 +5,14 @@ import com.glootie.meeseeks.data.entity.response.CharacterLastLocationResponse
 import com.glootie.meeseeks.data.entity.response.CharacterOriginLocationResponse
 import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
 import com.glootie.meeseeks.data.entity.response.CharacterSummaryResponse
+import com.glootie.meeseeks.data.entity.response.LocationDetailsResponse
 import com.glootie.meeseeks.data.entity.response.PageInfoResponse
 import com.glootie.meeseeks.domain.model.CharacterDetails
 import com.glootie.meeseeks.domain.model.CharacterLastLocation
 import com.glootie.meeseeks.domain.model.CharacterOriginLocation
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.domain.model.CharacterSummary
+import com.glootie.meeseeks.domain.model.LocationDetails
 
 internal object DataMock {
 
@@ -58,5 +60,17 @@ internal object DataMock {
         originLocation = CharacterOriginLocation(name = "Earth", id = 1),
         lastLocation = CharacterLastLocation(name = "Earth", id = 1),
         image = "https://example.com/summer.png"
+    )
+
+    val sampleLocationDetailsResponse = LocationDetailsResponse(
+        name = "Earth (C-137)",
+        type = "Planet",
+        dimension = "Dimension C-137"
+    )
+
+    val sampleLocationDetails = LocationDetails(
+        name = "Earth (C-137)",
+        type = "Planet",
+        dimension = "Dimension C-137"
     )
 }
