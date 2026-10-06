@@ -109,9 +109,11 @@ fun CharacterCard(
                         onError = { isLoaded = true }
                     )
                 }
-                Column(modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
                     Text(
                         text = characterSummary.name,
                         fontWeight = FontWeight.Bold,
@@ -155,14 +157,19 @@ fun AttributeCard(
     title: String,
     body: String,
     icon: ImageVector,
-    contentDescription: String
+    contentDescription: String,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .then(
+                onClick?.let { Modifier.clickable(onClick = onClick) } ?: Modifier
+            ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Row(
             modifier = Modifier

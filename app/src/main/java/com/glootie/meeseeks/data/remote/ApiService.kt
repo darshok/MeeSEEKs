@@ -3,6 +3,7 @@ package com.glootie.meeseeks.data.remote
 import com.glootie.meeseeks.core.API_BASE_URL
 import com.glootie.meeseeks.data.entity.response.CharacterDetailsResponse
 import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
+import com.glootie.meeseeks.data.entity.response.LocationDetailsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -19,4 +20,9 @@ interface ApiService {
     suspend fun getCharacterDetails(
         @Path("id") id: Int
     ): Response<CharacterDetailsResponse>
+
+    @GET(API_BASE_URL + "location/{id}")
+    suspend fun getLocationDetails(
+        @Path("id") id: Int
+    ): Response<LocationDetailsResponse>
 }

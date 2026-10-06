@@ -23,8 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Button
@@ -53,10 +53,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.glootie.meeseeks.R
 import com.glootie.meeseeks.core.IMAGE_SHARED_KEY
+import com.glootie.meeseeks.core.LOCATION_SHARED_KEY
 import com.glootie.meeseeks.domain.model.CharacterDetails
+import com.glootie.meeseeks.domain.model.CharacterLastLocation
+import com.glootie.meeseeks.domain.model.CharacterOriginLocation
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.common.skeleton.AttributeCardSkeleton
+import com.glootie.meeseeks.ui.common.skeleton.HeaderCardSkeleton
 import com.glootie.meeseeks.ui.component.AttributeCard
 import com.glootie.meeseeks.ui.component.shimmerEffect
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
@@ -70,7 +74,8 @@ fun CharacterDetailsScreen(
         creationCallback = { factory: CharacterDetailsViewModel.Factory ->
             factory.create(characterId)
         }
-    )
+    ),
+    onLocationClick: (Int) -> Unit = {}
 ) {
     val characterDetailsUiState by viewModel.characterDetailsUiState.collectAsState()
 
@@ -91,7 +96,8 @@ fun CharacterDetailsScreen(
                     characterId = characterId,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
-                    characterDetails = state.data
+                    characterDetails = state.data,
+                    onLocationClick = onLocationClick
                 )
             }
         }
@@ -103,7 +109,8 @@ private fun CharacterDetailsContent(
     characterId: Int,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    characterDetails: CharacterDetails
+    characterDetails: CharacterDetails,
+    onLocationClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -159,7 +166,7 @@ private fun CharacterDetailsContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         SuggestionChip(
-                            onClick = { },
+                            onClick = {},
                             label = { Text(characterDetails.species) }
                         )
                     }
@@ -196,19 +203,47 @@ private fun CharacterDetailsContent(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        AttributeCard(
-            title = stringResource(R.string.origin_title),
-            body = characterDetails.origin,
-            icon = Icons.Default.Place,
-            contentDescription = stringResource(R.string.location_icon_content_description)
-        )
+        val originId = characterDetails.originLocation.id
+        with(sharedTransitionScope) {
+            AttributeCard(
+                title = stringResource(R.string.origin_title),
+                body = characterDetails.originLocation.name,
+                icon = Icons.Default.Place,
+                contentDescription = stringResource(R.string.location_icon_content_description),
+                onClick = { originId?.let { onLocationClick(it) } },
+                modifier = if (originId != null) {
+                    Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState(
+                            key = LOCATION_SHARED_KEY + originId
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                } else {
+                    Modifier
+                }
+            )
+        }
 
-        AttributeCard(
-            title = stringResource(R.string.last_known_location_title),
-            body = characterDetails.location,
-            icon = Icons.Default.LocationOn,
-            contentDescription = stringResource(R.string.location_icon_content_description)
-        )
+        val lastLocationId = characterDetails.lastLocation.id
+        with(sharedTransitionScope) {
+            AttributeCard(
+                title = stringResource(R.string.last_known_location_title),
+                body = characterDetails.lastLocation.name,
+                icon = Icons.Filled.PersonSearch,
+                contentDescription = stringResource(R.string.location_icon_content_description),
+                onClick = { lastLocationId?.let { onLocationClick(it) } },
+                modifier = if (lastLocationId != null) {
+                    Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState(
+                            key = LOCATION_SHARED_KEY + lastLocationId
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                } else {
+                    Modifier
+                }
+            )
+        }
     }
 }
 
@@ -220,49 +255,12 @@ private fun CharacterDetailsSkeletonContent() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(110.dp)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .shimmerEffect()
-                )
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .height(28.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .shimmerEffect()
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.4f)
-                            .height(24.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .shimmerEffect()
-                    )
-                }
-            }
-        }
+        HeaderCardSkeleton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp),
+            hasImage = true
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -319,7 +317,7 @@ private fun CharacterDetailsErrorContent(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             modifier = Modifier.fillMaxWidth(0.6f),
-            onClick = { retry() }
+            onClick = retry
         ) {
             Text(
                 text = stringResource(R.string.generic_retry),
@@ -352,9 +350,10 @@ private fun CharacterDetailsContentPreview() {
                         image = null,
                         species = "Human",
                         gender = "Male",
-                        origin = "unknown",
-                        location = "Citadel of Ricks",
-                    )
+                        originLocation = CharacterOriginLocation(1, "unknown"),
+                        lastLocation = CharacterLastLocation(2, "Citadel of Ricks"),
+                    ),
+                    onLocationClick = {}
                 )
             }
         }

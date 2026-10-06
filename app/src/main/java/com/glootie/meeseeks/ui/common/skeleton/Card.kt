@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,7 +50,11 @@ internal fun AttributeCardSkeleton(
                     .clip(RoundedCornerShape(4.dp))
                     .shimmerEffect()
             )
-            Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -69,12 +75,78 @@ internal fun AttributeCardSkeleton(
     }
 }
 
+@Composable
+internal fun HeaderCardSkeleton(
+    modifier: Modifier = Modifier,
+    hasImage: Boolean? = null
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (hasImage == true) {
+                Box(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(28.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(28.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .shimmerEffect()
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AttributeCardSkeletonPreview() {
     MeeSEEKsTheme {
-        AttributeCardSkeleton(modifier = Modifier
-            .height(120.dp)
-            .padding(16.dp))
+        AttributeCardSkeleton(
+            modifier = Modifier
+                .height(120.dp)
+                .padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HeaderCardSkeletonPreview() {
+    MeeSEEKsTheme {
+        HeaderCardSkeleton(
+            modifier = Modifier
+                .height(160.dp)
+                .padding(16.dp),
+            hasImage = true
+        )
     }
 }

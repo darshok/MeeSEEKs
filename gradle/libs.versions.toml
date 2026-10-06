@@ -22,6 +22,8 @@ loggingInterceptor = "5.5.0"
 coilCompose = "3.6.3"
 mockkAndroid = "1.14.11"
 pagingCommon = "3.5.1"
+pagingTesting = "3.5.1"
+kotlinxCoroutinesTest = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -69,6 +71,8 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 
 # Mockk
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+paging-testing = { module = "androidx.paging:paging-testing", version.ref = "pagingTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

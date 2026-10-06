@@ -3,6 +3,8 @@ package com.glootie.meeseeks.data.entity.response
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import com.glootie.meeseeks.domain.model.CharacterDetails
+import com.glootie.meeseeks.domain.model.CharacterLastLocation
+import com.glootie.meeseeks.domain.model.CharacterOriginLocation
 import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.google.gson.annotations.SerializedName
 
@@ -16,14 +18,14 @@ data class CharacterDetailsResponse(
     @SerializedName("gender")
     val gender: String,
     @SerializedName("origin")
-    val origin: CharacterOriginResponse,
+    val originLocation: CharacterOriginLocationResponse,
     @SerializedName("location")
-    val location: CharacterLocationResponse,
+    val lastLocation: CharacterLastLocationResponse,
     @SerializedName("image")
     val image: String?
 )
 
-data class CharacterOriginResponse(
+data class CharacterOriginLocationResponse(
     @SerializedName("name")
     val name: String,
     @SerializedName("url")
@@ -31,7 +33,7 @@ data class CharacterOriginResponse(
 )
 
 
-data class CharacterLocationResponse(
+data class CharacterLastLocationResponse(
     @SerializedName("name")
     val name: String,
     @SerializedName("url")
@@ -43,7 +45,17 @@ fun CharacterDetailsResponse.mapToDomain() = CharacterDetails(
     status = enumValueOf<CharacterStatus>(status.toUpperCase(Locale.current)),
     species = species,
     gender = gender,
-    origin = origin.name,
-    location = location.name,
+    originLocation = originLocation.mapToDomain(),
+    lastLocation = lastLocation.mapToDomain(),
     image = image
+)
+
+fun CharacterOriginLocationResponse.mapToDomain() = CharacterOriginLocation(
+    id = url.substringAfterLast("/").toIntOrNull(),
+    name = name
+)
+
+fun CharacterLastLocationResponse.mapToDomain() = CharacterLastLocation(
+    id = url.substringAfterLast("/").toIntOrNull(),
+    name = name
 )

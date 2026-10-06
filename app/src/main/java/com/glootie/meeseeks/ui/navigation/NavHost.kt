@@ -16,6 +16,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import com.glootie.meeseeks.ui.screen.characterdetails.CharacterDetailsScreen
 import com.glootie.meeseeks.ui.screen.characterlist.CharacterListScreen
+import com.glootie.meeseeks.ui.screen.locationdetails.LocationDetailsScreen
 
 @Composable
 fun NavHost(
@@ -38,6 +39,16 @@ fun NavHost(
                     characterId = key.id,
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    onLocationClick = {
+                        backStack.add(Routes.LocationDetails(it))
+                    }
+                )
+            }
+            entry<Routes.LocationDetails> { key ->
+                LocationDetailsScreen(
+                    locationId = key.id,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
                 )
             }
         }

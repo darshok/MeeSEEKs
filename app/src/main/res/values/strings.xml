@@ -14,4 +14,8 @@
     <string name="locations_title">Locations</string>
     <string name="origin_title">Origin</string>
     <string name="last_known_location_title">Last Known Location</string>
+    <string name="dimension_title">Dimension</string>
+    <string name="dimension_icon_content_description">Dimension Icon</string>
+    <string name="type_title">Type</string>
+    <string name="type_icon_content_description">Type Icon</string>
 </resources>
