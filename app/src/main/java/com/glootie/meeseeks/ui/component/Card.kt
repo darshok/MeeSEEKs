@@ -60,7 +60,6 @@ fun CharacterCard(
     var isLoaded by remember { mutableStateOf(!hasImage) }
     val alpha by animateFloatAsState(
         targetValue = if (isLoaded) 1f else 0f,
-        label = "loadingTransition",
         animationSpec = tween(durationMillis = 300)
     )
     Card(
@@ -107,6 +106,7 @@ fun CharacterCard(
                         error = painterResource(R.drawable.ic_image_placeholder),
                         contentDescription = stringResource(R.string.character_thumbnail_content_description),
                         onSuccess = { isLoaded = true },
+                        onError = { isLoaded = true }
                     )
                 }
                 Column(modifier = Modifier

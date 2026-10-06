@@ -1,5 +1,7 @@
 package com.glootie.meeseeks.domain.model
 
+import androidx.compose.runtime.Immutable
+
 
 data class CharacterPaginated(
     val info: PageInfo,
@@ -13,6 +15,7 @@ data class PageInfo(
     val prev: String?
 )
 
+@Immutable
 data class CharacterSummary(
     val id: Int,
     val name: String,
