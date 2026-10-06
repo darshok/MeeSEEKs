@@ -23,6 +23,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.glootie.meeseeks.R
+import com.glootie.meeseeks.core.CHARACTER_CARD_CONTENT_TYPE
+import com.glootie.meeseeks.core.ERROR_CARD_CONTENT_TYPE
+import com.glootie.meeseeks.core.LOADING_INDICATOR_CONTENT_TYPE
 import com.glootie.meeseeks.domain.model.CharacterSummary
 import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.component.CharacterCard
@@ -95,7 +98,8 @@ fun CharacterSummaryList(
     ) {
         items(
             count = characterList.itemCount,
-            key = characterList.itemKey { it.id }
+            key = characterList.itemKey { it.id },
+            contentType = { CHARACTER_CARD_CONTENT_TYPE }
         ) { index ->
             characterList[index]?.let { character ->
                 CharacterCard(
@@ -110,7 +114,7 @@ fun CharacterSummaryList(
 
         when (val appendState = characterList.loadState.append) {
             is LoadState.Loading -> {
-                item {
+                item(contentType = { LOADING_INDICATOR_CONTENT_TYPE }) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -122,7 +126,7 @@ fun CharacterSummaryList(
             }
 
             is LoadState.Error -> {
-                item {
+                item(contentType = { ERROR_CARD_CONTENT_TYPE }) {
                     ListErrorCard(
                         modifier = Modifier
                             .fillMaxWidth()
