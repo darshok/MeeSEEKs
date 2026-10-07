@@ -1,11 +1,5 @@
 package com.glootie.meeseeks.data.entity.response
 
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toUpperCase
-import com.glootie.meeseeks.domain.model.CharacterDetails
-import com.glootie.meeseeks.domain.model.CharacterLastLocation
-import com.glootie.meeseeks.domain.model.CharacterOriginLocation
-import com.glootie.meeseeks.domain.model.CharacterStatus
 import com.google.gson.annotations.SerializedName
 
 data class CharacterDetailsResponse(
@@ -38,24 +32,4 @@ data class CharacterLastLocationResponse(
     val name: String,
     @SerializedName("url")
     val url: String
-)
-
-fun CharacterDetailsResponse.mapToDomain() = CharacterDetails(
-    name = name,
-    status = enumValueOf<CharacterStatus>(status.toUpperCase(Locale.current)),
-    species = species,
-    gender = gender,
-    originLocation = originLocation.mapToDomain(),
-    lastLocation = lastLocation.mapToDomain(),
-    image = image
-)
-
-fun CharacterOriginLocationResponse.mapToDomain() = CharacterOriginLocation(
-    id = url.substringAfterLast("/").toIntOrNull(),
-    name = name
-)
-
-fun CharacterLastLocationResponse.mapToDomain() = CharacterLastLocation(
-    id = url.substringAfterLast("/").toIntOrNull(),
-    name = name
 )

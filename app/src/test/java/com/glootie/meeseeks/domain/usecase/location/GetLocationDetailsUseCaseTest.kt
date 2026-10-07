@@ -27,16 +27,16 @@ class GetLocationDetailsUseCaseTest : BaseUnitTest() {
 
     @Test
     fun `GIVEN repository success WHEN invoke THEN returns UiState Success`() = runTest {
-        val detailsResponse = DataMock.sampleLocationDetailsResponse
-        coEvery { repository.getLocationDetails(1) } returns DataResponse.Success(detailsResponse)
+        val details = DataMock.sampleLocationDetails
+        coEvery { repository.getLocationDetails(1) } returns DataResponse.Success(details)
 
         val result = useCase(1)
 
         assertTrue(result is UiState.Success)
         val data = (result as UiState.Success).data
-        assertEquals(detailsResponse.name, data.name)
-        assertEquals(detailsResponse.type, data.type)
-        assertEquals(detailsResponse.dimension, data.dimension)
+        assertEquals(details.name, data.name)
+        assertEquals(details.type, data.type)
+        assertEquals(details.dimension, data.dimension)
     }
 
     @Test

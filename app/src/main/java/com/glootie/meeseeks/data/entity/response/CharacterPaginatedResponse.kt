@@ -1,11 +1,6 @@
 package com.glootie.meeseeks.data.entity.response
 
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toUpperCase
-import com.glootie.meeseeks.domain.model.CharacterPaginated
-import com.glootie.meeseeks.domain.model.CharacterStatus
-import com.glootie.meeseeks.domain.model.CharacterSummary
-import com.glootie.meeseeks.domain.model.PageInfo
+import com.glootie.meeseeks.data.local.entity.CharacterEntity
 import com.google.gson.annotations.SerializedName
 
 data class CharacterPaginatedResponse(
@@ -21,7 +16,7 @@ data class PageInfoResponse(
     @SerializedName("pages")
     val pages: Int,
     @SerializedName("next")
-    val next: String,
+    val next: String?,
     @SerializedName("prev")
     val prev: String?
 )
@@ -37,21 +32,9 @@ data class CharacterSummaryResponse(
     val image: String?,
 )
 
-internal fun CharacterPaginatedResponse.mapToDomain() = CharacterPaginated(
-    info = this.info.mapToDomain(),
-    results = this.results.map { it.mapToDomain() }
-)
-
-internal fun PageInfoResponse.mapToDomain() = PageInfo(
-    count = this.count,
-    pages = this.pages,
-    next = this.next,
-    prev = this.prev
-)
-
-internal fun CharacterSummaryResponse.mapToDomain() = CharacterSummary(
-    id = this.id,
-    name = this.name,
-    status = enumValueOf<CharacterStatus>(status.toUpperCase(Locale.current)),
-    image = this.image
+internal fun CharacterSummaryResponse.toEntity() = CharacterEntity(
+    id = id,
+    name = name,
+    status = status,
+    image = image
 )

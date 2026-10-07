@@ -28,16 +28,16 @@ class GetCharacterDetailsUseCaseTest : BaseUnitTest() {
 
     @Test
     fun `GIVEN repository success WHEN invoke THEN returns UiState Success`() = runTest {
-        val detailsResponse = DataMock.sampleCharacterDetailsResponse
-        coEvery { repository.getCharacterDetails(1) } returns DataResponse.Success(detailsResponse)
+        val details = DataMock.sampleCharacterDetails
+        coEvery { repository.getCharacterDetails(1) } returns DataResponse.Success(details)
 
         val result = useCase(1)
 
         assertTrue(result is UiState.Success)
         val data = (result as UiState.Success).data
-        assertEquals(detailsResponse.name, data.name)
+        assertEquals(details.name, data.name)
         assertEquals(CharacterStatus.ALIVE, data.status)
-        assertEquals(detailsResponse.species, data.species)
+        assertEquals(details.species, data.species)
     }
 
     @Test

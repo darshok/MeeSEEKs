@@ -2,16 +2,37 @@ package com.glootie.meeseeks.data.repository.impl
 
 import com.glootie.meeseeks.core.DataResponse
 import com.glootie.meeseeks.core.safeApiCall
-import com.glootie.meeseeks.data.entity.response.LocationDetailsResponse
+import com.glootie.meeseeks.data.local.MeeseeksDatabase
+import com.glootie.meeseeks.data.local.entity.LocationEntity
+import com.glootie.meeseeks.data.local.entity.toLocationDetails
 import com.glootie.meeseeks.data.remote.ApiService
 import com.glootie.meeseeks.data.repository.LocationRepository
+import com.glootie.meeseeks.domain.model.LocationDetails
 import javax.inject.Inject
 
-class LocationRepositoryImpl @Inject constructor(val apiService: ApiService) : LocationRepository {
+class LocationRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val database: MeeseeksDatabase
+) : LocationRepository {
 
-    override suspend fun getLocationDetails(id: Int): DataResponse<LocationDetailsResponse> {
-        return safeApiCall {
-            apiService.getLocationDetails(id)
+    override suspend fun getLocationDetails(id: Int): DataResponse<LocationDetails> {
+        val cachedLocation = database.locationDao().getLocationById(id)
+        return cachedLocation?.let {
+            DataResponse.Success(cachedLocation.toLocationDetails())
+        } ?: when (val apiResponse = safeApiCall { apiService.getLocationDetails(id) }) {
+            is DataResponse.Success -> {
+                val detailResponse = apiResponse.data
+                val entity = LocationEntity(
+                    id = id,
+                    name = detailResponse.name,
+                    type = detailResponse.type,
+                    dimension = detailResponse.dimension
+                )
+                database.locationDao().insert(entity)
+                DataResponse.Success(entity.toLocationDetails())
+            }
+
+            is DataResponse.Error -> DataResponse.Error(apiResponse.error)
         }
     }
 }

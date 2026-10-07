@@ -13,7 +13,8 @@ interface ApiService {
 
     @GET(API_BASE_URL + "character/")
     suspend fun getCharacters(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("name") name: String? = null
     ): Response<CharacterPaginatedResponse>
 
     @GET(API_BASE_URL + "character/{id}")

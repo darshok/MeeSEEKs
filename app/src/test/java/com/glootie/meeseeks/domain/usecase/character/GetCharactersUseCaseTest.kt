@@ -1,15 +1,14 @@
 package com.glootie.meeseeks.domain.usecase.character
 
+import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
 import com.glootie.meeseeks.base.BaseUnitTest
 import com.glootie.meeseeks.common.DataMock
-import com.glootie.meeseeks.core.DataResponse
-import com.glootie.meeseeks.data.entity.response.CharacterPaginatedResponse
-import com.glootie.meeseeks.data.entity.response.PageInfoResponse
 import com.glootie.meeseeks.data.repository.CharacterRepository
 import com.glootie.meeseeks.domain.model.CharacterStatus
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -28,23 +27,16 @@ class GetCharactersUseCaseTest : BaseUnitTest() {
     }
 
     @Test
-    fun `GIVEN repository returns paginated characters WHEN invoke THEN emits mapped character summaries`() = runTest {
-        val page1Response = CharacterPaginatedResponse(
-            info = PageInfoResponse(
-                count = 1,
-                pages = 1,
-                next = "",
-                prev = null
-            ),
-            results = listOf(DataMock.sampleCharacterSummaryResponse)
-        )
-        coEvery { repository.getCharacters(1) } returns DataResponse.Success(page1Response)
+    fun `GIVEN repository returns paginated characters WHEN invoke THEN emits mapped character summaries`() =
+        runTest {
+            val pagingData = PagingData.from(listOf(DataMock.sampleCharacterSummary))
+            every { repository.getCharacters(any()) } returns flowOf(pagingData)
 
-        val items = useCase().asSnapshot()
+            val items = useCase().asSnapshot()
 
-        assertEquals(1, items.size)
-        assertEquals(DataMock.sampleCharacterSummaryResponse.id, items[0].id)
-        assertEquals(DataMock.sampleCharacterSummaryResponse.name, items[0].name)
-        assertEquals(CharacterStatus.ALIVE, items[0].status)
-    }
+            assertEquals(1, items.size)
+            assertEquals(DataMock.sampleCharacterSummary.id, items[0].id)
+            assertEquals(DataMock.sampleCharacterSummary.name, items[0].name)
+            assertEquals(CharacterStatus.ALIVE, items[0].status)
+        }
 }
