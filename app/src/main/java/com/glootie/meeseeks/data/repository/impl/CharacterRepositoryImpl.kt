@@ -8,6 +8,7 @@ import androidx.paging.map
 import com.glootie.meeseeks.core.DataResponse
 import com.glootie.meeseeks.core.safeApiCall
 import com.glootie.meeseeks.data.local.MeeseeksDatabase
+import com.glootie.meeseeks.data.local.dao.CharacterDao
 import com.glootie.meeseeks.data.local.entity.CharacterEntity
 import com.glootie.meeseeks.data.local.entity.toCharacterDetails
 import com.glootie.meeseeks.data.local.entity.toCharacterSummary
@@ -30,6 +31,7 @@ const val INITIAL_LOAD_SIZE = 40
 const val PREFETCH_DISTANCE = 5
 class CharacterRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
+    private val characterDao: CharacterDao,
     private val database: MeeseeksDatabase
 ) : CharacterRepository {
 
@@ -38,7 +40,7 @@ class CharacterRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getCharacters(query: String): Flow<PagingData<CharacterSummary>> {
-        val pagingSourceFactory = { database.characterDao().pagingSource(query) }
+        val pagingSourceFactory = { characterDao.pagingSource(query) }
 
         return Pager(
             config = PagingConfig(
@@ -61,7 +63,7 @@ class CharacterRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCharacterDetails(id: Int): DataResponse<CharacterDetails> {
-        val cachedDetail = database.characterDao().getCharacterById(id)?.toCharacterDetails()
+        val cachedDetail = characterDao.getCharacterById(id)?.toCharacterDetails()
         if (cachedDetail != null) {
             return DataResponse.Success(cachedDetail)
         }
@@ -84,7 +86,7 @@ class CharacterRepositoryImpl @Inject constructor(
                         lastLocationName = lastLocation.name
                     )
 
-                    database.characterDao().insert(entity)
+                    characterDao.insert(entity)
                     DataResponse.Success(entity.toCharacterDetails()!!)
                 }
             }

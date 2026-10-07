@@ -3,13 +3,11 @@ package com.glootie.meeseeks.data.repository
 import com.glootie.meeseeks.base.BaseUnitTest
 import com.glootie.meeseeks.common.DataMock
 import com.glootie.meeseeks.core.DataResponse
-import com.glootie.meeseeks.data.local.MeeseeksDatabase
 import com.glootie.meeseeks.data.local.dao.LocationDao
 import com.glootie.meeseeks.data.local.entity.LocationEntity
 import com.glootie.meeseeks.data.remote.ApiService
 import com.glootie.meeseeks.data.repository.impl.LocationRepositoryImpl
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -24,9 +22,6 @@ class LocationRepositoryImplTest : BaseUnitTest() {
     private lateinit var apiService: ApiService
 
     @MockK
-    private lateinit var database: MeeseeksDatabase
-
-    @MockK
     private lateinit var locationDao: LocationDao
 
     private lateinit var repository: LocationRepositoryImpl
@@ -34,8 +29,7 @@ class LocationRepositoryImplTest : BaseUnitTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        every { database.locationDao() } returns locationDao
-        repository = LocationRepositoryImpl(apiService, database)
+        repository = LocationRepositoryImpl(apiService, locationDao)
     }
 
     @Test

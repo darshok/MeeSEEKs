@@ -2,7 +2,7 @@ package com.glootie.meeseeks.data.repository.impl
 
 import com.glootie.meeseeks.core.DataResponse
 import com.glootie.meeseeks.core.safeApiCall
-import com.glootie.meeseeks.data.local.MeeseeksDatabase
+import com.glootie.meeseeks.data.local.dao.LocationDao
 import com.glootie.meeseeks.data.local.entity.LocationEntity
 import com.glootie.meeseeks.data.local.entity.toLocationDetails
 import com.glootie.meeseeks.data.remote.ApiService
@@ -12,11 +12,11 @@ import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val database: MeeseeksDatabase
+    private val locationDao: LocationDao
 ) : LocationRepository {
 
     override suspend fun getLocationDetails(id: Int): DataResponse<LocationDetails> {
-        val cachedLocation = database.locationDao().getLocationById(id)
+        val cachedLocation = locationDao.getLocationById(id)
         return cachedLocation?.let {
             DataResponse.Success(cachedLocation.toLocationDetails())
         } ?: when (val apiResponse = safeApiCall { apiService.getLocationDetails(id) }) {
@@ -28,7 +28,7 @@ class LocationRepositoryImpl @Inject constructor(
                     type = detailResponse.type,
                     dimension = detailResponse.dimension
                 )
-                database.locationDao().insert(entity)
+                locationDao.insert(entity)
                 DataResponse.Success(entity.toLocationDetails())
             }
 

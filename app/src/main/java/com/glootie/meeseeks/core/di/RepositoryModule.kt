@@ -1,6 +1,8 @@
 package com.glootie.meeseeks.core.di
 
 import com.glootie.meeseeks.data.local.MeeseeksDatabase
+import com.glootie.meeseeks.data.local.dao.CharacterDao
+import com.glootie.meeseeks.data.local.dao.LocationDao
 import com.glootie.meeseeks.data.remote.ApiService
 import com.glootie.meeseeks.data.repository.CharacterRepository
 import com.glootie.meeseeks.data.repository.LocationRepository
@@ -18,13 +20,13 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providerCharacterRepositoryImpl(apiService: ApiService, database: MeeseeksDatabase) : CharacterRepository {
-        return CharacterRepositoryImpl(apiService, database)
+    fun providerCharacterRepositoryImpl(apiService: ApiService, characterDao: CharacterDao, database: MeeseeksDatabase) : CharacterRepository {
+        return CharacterRepositoryImpl(apiService, characterDao, database)
     }
 
     @Provides
     @Singleton
-    fun providerLocationRepositoryImpl(apiService: ApiService, database: MeeseeksDatabase) : LocationRepository {
-        return LocationRepositoryImpl(apiService, database)
+    fun providerLocationRepositoryImpl(apiService: ApiService, locationDao: LocationDao) : LocationRepository {
+        return LocationRepositoryImpl(apiService, locationDao)
     }
 }

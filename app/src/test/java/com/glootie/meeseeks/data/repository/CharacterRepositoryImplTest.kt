@@ -35,8 +35,7 @@ class CharacterRepositoryImplTest : BaseUnitTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        every { database.characterDao() } returns characterDao
-        repository = CharacterRepositoryImpl(apiService, database)
+        repository = CharacterRepositoryImpl(apiService, characterDao, database)
     }
 
     @Test

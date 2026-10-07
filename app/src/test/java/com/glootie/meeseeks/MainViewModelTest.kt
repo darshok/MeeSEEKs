@@ -32,4 +32,27 @@ class MainViewModelTest : BaseViewModelTest() {
 
         assertEquals(true, viewModel.isFirstPageLoaded.value)
     }
+
+    @Test
+    fun `GIVEN search query WHEN updateSearchQuery is called THEN searchQuery state updates`() {
+        assertEquals("", viewModel.searchQuery.value)
+
+        viewModel.updateSearchQuery("Rick")
+
+        assertEquals("Rick", viewModel.searchQuery.value)
+    }
+
+    @Test
+    fun `GIVEN search active state WHEN setSearchActive is called THEN isSearchActive updates and resets query on close`() {
+        assertEquals(false, viewModel.isSearchActive.value)
+
+        viewModel.setSearchActive(true)
+        viewModel.updateSearchQuery("Morty")
+        assertEquals(true, viewModel.isSearchActive.value)
+        assertEquals("Morty", viewModel.searchQuery.value)
+
+        viewModel.setSearchActive(false)
+        assertEquals(false, viewModel.isSearchActive.value)
+        assertEquals("", viewModel.searchQuery.value)
+    }
 }

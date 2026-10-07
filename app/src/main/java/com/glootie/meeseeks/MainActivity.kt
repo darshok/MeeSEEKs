@@ -12,14 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.glootie.meeseeks.ui.component.MainTopBar
 import com.glootie.meeseeks.ui.navigation.NavHost
@@ -65,19 +64,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MeeSEEKsTheme {
-                MeeSEEKsApp()
+                MeeSEEKsApp(viewModel = viewModel)
             }
         }
     }
 }
 
 @Composable
-private fun MeeSEEKsApp() {
+private fun MeeSEEKsApp(viewModel: MainViewModel = hiltViewModel()) {
     val backStack = rememberNavBackStack(Routes.CharacterList)
     val isLastScreen = backStack.size == 1
 
-    var searchQuery by rememberSaveable { mutableStateOf("") }
-    var isSearchActive by rememberSaveable { mutableStateOf(false) }
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val isSearchActive by viewModel.isSearchActive.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -88,9 +87,9 @@ private fun MeeSEEKsApp() {
                 onBack = { backStack.removeLastOrNull() },
                 showSearchAction = isLastScreen,
                 isSearchActive = isSearchActive,
-                onSearchActiveChange = { isSearchActive = it },
+                onSearchActiveChange = { viewModel.setSearchActive(it) },
                 searchQuery = searchQuery,
-                onSearchQueryChange = { searchQuery = it }
+                onSearchQueryChange = { viewModel.updateSearchQuery(it) }
             )
         }
     ) { paddingValues ->
@@ -98,7 +97,7 @@ private fun MeeSEEKsApp() {
             modifier = Modifier.padding(paddingValues),
             backStack = backStack,
             searchQuery = searchQuery,
-            isSearchActive = { isSearchActive = it }
+            isSearchActive = { viewModel.setSearchActive(it) }
         )
     }
 }
