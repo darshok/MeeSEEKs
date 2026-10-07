@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -88,4 +89,14 @@ class CharacterRepositoryImplTest : BaseUnitTest() {
 
             assertTrue(result is DataResponse.Error)
         }
+
+    @Test
+    fun `GIVEN a query WHEN get characters THEN returns PagingData Flow`() = runTest {
+        val mockPagingSource = io.mockk.mockk<androidx.paging.PagingSource<Int, CharacterEntity>>()
+        every { characterDao.pagingSource(any()) } returns mockPagingSource
+
+        val result = repository.getCharacters("Rick")
+
+        assertNotNull(result)
+    }
 }

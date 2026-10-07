@@ -41,4 +41,18 @@ class CharacterListViewModelTest : BaseViewModelTest() {
 
         verify(exactly = 1) { getCharactersUseCase("") }
     }
+
+    @Test
+    fun `GIVEN a new search query WHEN updateSearchQuery is called THEN invokes GetCharactersUseCase with query`() =
+        runTest {
+            advanceTimeBy(400.milliseconds)
+            viewModel.characterList.first()
+
+            viewModel.updateSearchQuery("Rick")
+
+            advanceTimeBy(400.milliseconds)
+            viewModel.characterList.first()
+
+            verify(exactly = 1) { getCharactersUseCase("Rick") }
+        }
 }
