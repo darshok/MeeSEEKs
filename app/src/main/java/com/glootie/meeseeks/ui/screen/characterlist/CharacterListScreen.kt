@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,8 +44,11 @@ fun CharacterListScreen(
     searchQuery: String = "",
     onItemClick: (Int) -> Unit = {}
 ) {
+    val gridState = rememberLazyGridState()
+
     LaunchedEffect(searchQuery) {
         viewModel.updateSearchQuery(searchQuery)
+        gridState.scrollToItem(0)
     }
 
     val characterList = viewModel.characterList.collectAsLazyPagingItems()
@@ -83,6 +88,7 @@ fun CharacterListScreen(
                     animatedVisibilityScope = animatedVisibilityScope,
                     modifier = Modifier.fillMaxSize(),
                     characterList = characterList,
+                    gridState = gridState,
                     onItemClick = onItemClick
                 )
             }
@@ -96,9 +102,11 @@ fun CharacterSummaryList(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     characterList: LazyPagingItems<CharacterSummary>,
+    gridState: LazyGridState = rememberLazyGridState(),
     onItemClick: (Int) -> Unit = {}
 ) {
     LazyVerticalGrid(
+        state = gridState,
         columns = GridCells.Adaptive(minSize = 340.dp),
         modifier = modifier
             .fillMaxSize()
