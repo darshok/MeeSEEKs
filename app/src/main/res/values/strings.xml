@@ -23,4 +23,6 @@
     <string name="search_action">Search</string>
     <string name="menu_content_description">Menu</string>
     <string name="avatar_content_description">User Avatar</string>
+    <string name="no_characters_found">No characters found matching your search</string>
+    <string name="no_characters_found_content_description">No characters found</string>
 </resources>
