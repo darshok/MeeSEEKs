@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.animation.doOnEnd
@@ -70,19 +74,31 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun MeeSEEKsApp() {
     val backStack = rememberNavBackStack(Routes.CharacterList)
+    val isLastScreen = backStack.size == 1
+
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var isSearchActive by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(
                 title = stringResource(R.string.app_name),
-                isLastScreen = backStack.size == 1,
-                onBack = { backStack.removeLastOrNull() })
+                isLastScreen = isLastScreen,
+                onBack = { backStack.removeLastOrNull() },
+                showSearchAction = isLastScreen,
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = { isSearchActive = it },
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it }
+            )
         }
     ) { paddingValues ->
         NavHost(
             modifier = Modifier.padding(paddingValues),
-            backStack = backStack
+            backStack = backStack,
+            searchQuery = searchQuery,
+            isSearchActive = { isSearchActive = it }
         )
     }
 }

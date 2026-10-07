@@ -22,6 +22,8 @@ import com.glootie.meeseeks.ui.screen.locationdetails.LocationDetailsScreen
 fun NavHost(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
+    searchQuery: String = "",
+    isSearchActive: (Boolean) -> Unit
 ) {
     SharedTransitionLayout {
         val entryProvider = entryProvider<NavKey> {
@@ -29,7 +31,9 @@ fun NavHost(
                 CharacterListScreen(
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    searchQuery = searchQuery,
                     onItemClick = {
+                        isSearchActive(false)
                         backStack.add(Routes.CharacterDetails(it))
                     }
                 )

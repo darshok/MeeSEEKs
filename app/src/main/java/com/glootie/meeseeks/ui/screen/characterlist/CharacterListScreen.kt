@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -38,8 +39,13 @@ fun CharacterListScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CharacterListViewModel = hiltViewModel(),
+    searchQuery: String = "",
     onItemClick: (Int) -> Unit = {}
 ) {
+    LaunchedEffect(searchQuery) {
+        viewModel.updateSearchQuery(searchQuery)
+    }
+
     val characterList = viewModel.characterList.collectAsLazyPagingItems()
 
     val uiState by remember {
