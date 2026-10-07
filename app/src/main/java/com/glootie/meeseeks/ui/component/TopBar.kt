@@ -96,7 +96,6 @@ fun MainTopBar(
                         leadingIcon = {
                             IconButton(onClick = {
                                 onSearchActiveChange(false)
-                                onSearchQueryChange("")
                             }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

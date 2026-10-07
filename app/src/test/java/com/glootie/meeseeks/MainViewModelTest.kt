@@ -53,6 +53,6 @@ class MainViewModelTest : BaseViewModelTest() {
 
         viewModel.setSearchActive(false)
         assertEquals(false, viewModel.isSearchActive.value)
-        assertEquals("", viewModel.searchQuery.value)
+        assertEquals("Morty", viewModel.searchQuery.value)
     }
 }

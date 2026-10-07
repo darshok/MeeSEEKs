@@ -27,8 +27,5 @@ class MainViewModel @Inject constructor(
 
     fun setSearchActive(isActive: Boolean) {
         _isSearchActive.value = isActive
-        if (!isActive) {
-            _searchQuery.value = ""
-        }
     }
 }
