@@ -28,8 +28,6 @@ import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -62,6 +60,7 @@ import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.common.skeleton.AttributeCardSkeleton
 import com.glootie.meeseeks.ui.common.skeleton.HeaderCardSkeleton
 import com.glootie.meeseeks.ui.component.AttributeCard
+import com.glootie.meeseeks.ui.component.HeaderCard
 import com.glootie.meeseeks.ui.component.shimmerEffect
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 
@@ -119,20 +118,8 @@ private fun CharacterDetailsContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        HeaderCard(
+            imageContent = {
                 with(sharedTransitionScope) {
                     AsyncImage(
                         model = characterDetails.image,
@@ -151,26 +138,21 @@ private fun CharacterDetailsContent(
                             )
                     )
                 }
+            }
+        ) {
+            Text(
+                text = characterDetails.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = characterDetails.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        SuggestionChip(
-                            onClick = {},
-                            label = { Text(characterDetails.species) }
-                        )
-                    }
-                }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SuggestionChip(
+                    onClick = {},
+                    label = { Text(characterDetails.species) }
+                )
             }
         }
 
@@ -210,7 +192,7 @@ private fun CharacterDetailsContent(
                 body = characterDetails.originLocation.name,
                 icon = Icons.Default.Place,
                 contentDescription = stringResource(R.string.location_icon_content_description),
-                onClick = { originId?.let { onLocationClick(it) } },
+                onClick = { originId?.let { if (it != 0) onLocationClick(it) } },
                 modifier = if (originId != null) {
                     Modifier.sharedElement(
                         sharedContentState = rememberSharedContentState(
@@ -231,7 +213,7 @@ private fun CharacterDetailsContent(
                 body = characterDetails.lastLocation.name,
                 icon = Icons.Filled.PersonSearch,
                 contentDescription = stringResource(R.string.location_icon_content_description),
-                onClick = { lastLocationId?.let { onLocationClick(it) } },
+                onClick = { lastLocationId?.let { if (it != 0) onLocationClick(it) } },
                 modifier = if (lastLocationId != null) {
                     Modifier.sharedElement(
                         sharedContentState = rememberSharedContentState(

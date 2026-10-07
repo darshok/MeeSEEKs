@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -200,6 +201,48 @@ fun AttributeCard(
     }
 }
 
+@Composable
+fun HeaderCard(
+    modifier: Modifier = Modifier,
+    imageContent: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        if (imageContent != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                imageContent()
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    content()
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                content()
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun AttributeCardPreview() {
@@ -209,6 +252,40 @@ private fun AttributeCardPreview() {
         icon = Icons.Default.Person,
         contentDescription = "content"
     )
+}
+
+@Preview
+@Composable
+private fun HeaderCardPreview() {
+    HeaderCard(
+        imageContent = {
+            AsyncImage(
+                model = null,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.ic_image_placeholder),
+                modifier = Modifier
+                    .width(110.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+        }
+    ) {
+        Text(
+            text = "Toxic Rick",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SuggestionChip(
+                onClick = {},
+                label = { Text("unknown") }
+            )
+        }
+    }
 }
 
 @Preview

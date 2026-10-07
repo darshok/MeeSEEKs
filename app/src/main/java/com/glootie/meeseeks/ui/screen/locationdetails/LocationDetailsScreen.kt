@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -45,6 +42,7 @@ import com.glootie.meeseeks.ui.common.UiState
 import com.glootie.meeseeks.ui.common.skeleton.AttributeCardSkeleton
 import com.glootie.meeseeks.ui.common.skeleton.HeaderCardSkeleton
 import com.glootie.meeseeks.ui.component.AttributeCard
+import com.glootie.meeseeks.ui.component.HeaderCard
 import com.glootie.meeseeks.ui.theme.MeeSEEKsTheme
 
 @Composable
@@ -98,37 +96,24 @@ private fun LocationDetailsContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                with(sharedTransitionScope) {
-                    Text(
-                        text = locationDetails.name,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                key = LOCATION_SHARED_KEY + locationId
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
+        HeaderCard {
+            with(sharedTransitionScope) {
+                Text(
+                    text = locationDetails.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState(
+                            key = LOCATION_SHARED_KEY + locationId
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
-                }
-                SuggestionChip(
-                    onClick = {},
-                    label = { Text(locationDetails.type) }
                 )
             }
+            SuggestionChip(
+                onClick = {},
+                label = { Text(locationDetails.type) }
+            )
         }
 
         AttributeCard(
