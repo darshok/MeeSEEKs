@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -77,6 +78,10 @@ private fun MeeSEEKsApp(viewModel: MainViewModel = hiltViewModel()) {
 
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearchActive by viewModel.isSearchActive.collectAsState()
+
+    BackHandler(enabled = isSearchActive) {
+        viewModel.setSearchActive(false)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
