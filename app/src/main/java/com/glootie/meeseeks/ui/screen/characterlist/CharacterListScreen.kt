@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -90,10 +92,12 @@ fun CharacterSummaryList(
     characterList: LazyPagingItems<CharacterSummary>,
     onItemClick: (Int) -> Unit = {}
 ) {
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 340.dp),
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(
@@ -114,7 +118,10 @@ fun CharacterSummaryList(
 
         when (val appendState = characterList.loadState.append) {
             is LoadState.Loading -> {
-                item(contentType = { LOADING_INDICATOR_CONTENT_TYPE }) {
+                item(
+                    span = { GridItemSpan(maxLineSpan) },
+                    contentType = { LOADING_INDICATOR_CONTENT_TYPE }
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -126,7 +133,10 @@ fun CharacterSummaryList(
             }
 
             is LoadState.Error -> {
-                item(contentType = { ERROR_CARD_CONTENT_TYPE }) {
+                item(
+                    span = { GridItemSpan(maxLineSpan) },
+                    contentType = { ERROR_CARD_CONTENT_TYPE }
+                ) {
                     ListErrorCard(
                         modifier = Modifier
                             .fillMaxWidth()
