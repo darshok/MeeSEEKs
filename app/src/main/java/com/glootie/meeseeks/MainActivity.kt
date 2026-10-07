@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -38,30 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         splashScreen.setKeepOnScreenCondition { !viewModel.isFirstPageLoaded.value }
-        splashScreen.setOnExitAnimationListener { listener ->
-            val zoomX = ObjectAnimator.ofFloat(
-                listener.iconView,
-                View.SCALE_X,
-                0.6f,
-                0.0f
-            ).apply {
-                interpolator = OvershootInterpolator()
-                duration = 500L
-                doOnEnd { listener.remove() }
-            }
-            val zoomY = ObjectAnimator.ofFloat(
-                listener.iconView,
-                View.SCALE_Y,
-                0.6f,
-                0.0f
-            ).apply {
-                interpolator = OvershootInterpolator()
-                duration = 500L
-                doOnEnd { listener.remove() }
-            }
-            zoomX.start()
-            zoomY.start()
-        }
+        splashScreen.setupCustomExitAnimation()
 
         setContent {
             MeeSEEKsTheme {
@@ -104,5 +82,32 @@ private fun MeeSEEKsApp(viewModel: MainViewModel = hiltViewModel()) {
             searchQuery = searchQuery,
             isSearchActive = { viewModel.setSearchActive(it) }
         )
+    }
+}
+
+private fun SplashScreen.setupCustomExitAnimation() {
+    setOnExitAnimationListener { listener ->
+        val zoomX = ObjectAnimator.ofFloat(
+            listener.iconView,
+            View.SCALE_X,
+            0.6f,
+            0.0f
+        ).apply {
+            interpolator = OvershootInterpolator()
+            duration = 500L
+            doOnEnd { listener.remove() }
+        }
+        val zoomY = ObjectAnimator.ofFloat(
+            listener.iconView,
+            View.SCALE_Y,
+            0.6f,
+            0.0f
+        ).apply {
+            interpolator = OvershootInterpolator()
+            duration = 500L
+            doOnEnd { listener.remove() }
+        }
+        zoomX.start()
+        zoomY.start()
     }
 }
